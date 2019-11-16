@@ -1,6 +1,7 @@
 package be.julien.winterboots.controller;
 
-import be.julien.winterboots.entities.ProductEntity;
+import be.julien.winterboots.Logger;
+import be.julien.winterboots.entities.Product;
 import be.julien.winterboots.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,9 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.util.function.UnaryOperator;
 
 @Controller
-public class ProductController {
+public class ProductController implements Logger {
 
     private final ProductRepository productRepository;
 
@@ -23,43 +25,41 @@ public class ProductController {
     }
 
     @GetMapping("/createProduct")
-    public String showCreateProductForm(ProductEntity product) {
+    public String showCreateProductForm(Product product) {
         return "add-product";
     }
 
     @PostMapping("/addProduct")
-    public String addProduct(@Valid ProductEntity product, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            return "add-product";
-        }
+    public String addProduct(@Valid Product product, BindingResult result, Model model) {
+        return changeOnProduct(product, result, model, "add-product", "index", productRepository::save);
+    }
 
-        productRepository.save(product);
+    @PostMapping("/update/{id}")
+    public String updateProduct(@PathVariable("id") long id, @Valid Product product, BindingResult result, Model model) {
+        return changeOnProduct(product, result, model, "update-product", "index", productRepository::save);
+    }
+
+    private String changeOnProduct(@Valid Product product, BindingResult result, Model model, String errorBinding, String successBinding, UnaryOperator<Product> productOperation) {
+        if (result.hasErrors()) {
+            logError(result.getAllErrors());
+            return errorBinding;
+        }
+        logInfo("Product processed: " + product.getName() + " and binding: " + successBinding);
+        productOperation.apply(product);
         model.addAttribute("products", productRepository.findAll());
-        return "index";
+        return successBinding;
     }
 
     @GetMapping("/edit/{id}")
     public String showUpdateForm(@PathVariable("id") long id, Model model) {
-        ProductEntity product = productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
+        Product product = productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
         model.addAttribute("product", product);
         return "update-product";
     }
 
-    @PostMapping("/update/{id}")
-    public String updateProduct(@PathVariable("id") long id, @Valid ProductEntity product, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            product.setId(id);
-            return "update-product";
-        }
-
-        productRepository.save(product);
-        model.addAttribute("products", productRepository.findAll());
-        return "index";
-    }
-
     @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable("id") long id, Model model) {
-        ProductEntity product = productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
+        Product product = productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
         productRepository.delete(product);
         model.addAttribute("products", productRepository.findAll());
         return "index";
