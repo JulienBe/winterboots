@@ -1,0 +1,1 @@
+credit for the CRUD base: https://www.baeldung.com/spring-boot-crud-thymeleaf

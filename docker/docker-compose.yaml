@@ -1,0 +1,16 @@
+# Use root/example as user/password credentials
+version: '3.7'
+
+services:
+
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Volvo240
+      MYSQL_USER: user
+      MYSQL_PASSWORD: Volvo240
+    volumes:
+      - "./data:/var/lib/mysql"
+    ports:
+      - 3306:3306

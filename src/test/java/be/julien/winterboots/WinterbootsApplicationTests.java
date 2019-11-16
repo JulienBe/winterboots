@@ -8,6 +8,7 @@ class WinterbootsApplicationTests {
 
 	@Test
 	void contextLoads() {
+		System.out.println("Test passed");
 	}
 
 }
