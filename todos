@@ -1,2 +1,4 @@
-thymeleaf composition
-add users
+* thymeleaf composition
+* add users
+* lots of duplication in prod and user controller. Or everything :o.
+* * solution 1: base class. need reflexion to edit mapping values. quite fragile

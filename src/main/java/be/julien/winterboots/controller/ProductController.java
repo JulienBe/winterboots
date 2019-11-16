@@ -12,7 +12,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 @Controller
 public class ProductController implements Logger {
@@ -34,7 +38,7 @@ public class ProductController implements Logger {
         return changeOnProduct(product, result, model, "add-product", "index", productRepository::save);
     }
 
-    @PostMapping("/update/{id}")
+    @PostMapping("/updateProduct/{id}")
     public String updateProduct(@PathVariable("id") long id, @Valid Product product, BindingResult result, Model model) {
         return changeOnProduct(product, result, model, "update-product", "index", productRepository::save);
     }
@@ -50,14 +54,14 @@ public class ProductController implements Logger {
         return successBinding;
     }
 
-    @GetMapping("/edit/{id}")
+    @GetMapping("/editProduct/{id}")
     public String showUpdateForm(@PathVariable("id") long id, Model model) {
         Product product = productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
         model.addAttribute("product", product);
         return "update-product";
     }
 
-    @GetMapping("/delete/{id}")
+    @GetMapping("/deleteProduct/{id}")
     public String deleteProduct(@PathVariable("id") long id, Model model) {
         Product product = productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
         productRepository.delete(product);
