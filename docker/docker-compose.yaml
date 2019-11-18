@@ -2,10 +2,10 @@
 version: '3.7'
 
 services:
-
-  db:
+  database:
     image: mariadb
     restart: always
+    hostname: database
     environment:
       MYSQL_ROOT_PASSWORD: Volvo240
       MYSQL_USER: user
@@ -14,3 +14,18 @@ services:
       - "./data:/var/lib/mysql"
     ports:
       - 3306:3306
+    networks:
+      - back
+  app:
+    build: ../
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - database
+    networks:
+      - back
+
+networks:
+  back:
+    driver: bridge
