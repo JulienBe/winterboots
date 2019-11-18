@@ -40,7 +40,18 @@ public class ProductController implements Logger {
 
     @PostMapping("/updateProduct/{id}")
     public String updateProduct(@PathVariable("id") long id, @Valid Product product, BindingResult result, Model model) {
-        return changeOnProduct(product, result, model, "update-product", "index", productRepository::save);
+        final String failedBinding = "update-product";
+        Product updatedProduct = new Product();
+        updatedProduct.setName(product.getName());
+        updatedProduct.setPrice(product.getPrice());
+        updatedProduct.setPreviousId(product.getId());
+
+        Product oldProduct = getProductById(product.getId());
+
+        String firstUpdateResult = changeOnProduct(updatedProduct, result, model, failedBinding, "index", productRepository::save);
+        oldProduct.setNextId(updatedProduct.getId());
+        String secondUpdateResult =  changeOnProduct(oldProduct, result, model, failedBinding, "index", productRepository::save);
+        return firstUpdateResult.equals(secondUpdateResult) ? firstUpdateResult : failedBinding;
     }
 
     private String changeOnProduct(@Valid Product product, BindingResult result, Model model, String errorBinding, String successBinding, UnaryOperator<Product> productOperation) {
@@ -56,14 +67,18 @@ public class ProductController implements Logger {
 
     @GetMapping("/editProduct/{id}")
     public String showUpdateForm(@PathVariable("id") long id, Model model) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
+        Product product = getProductById(id);
         model.addAttribute("product", product);
         return "update-product";
     }
 
+    private Product getProductById(@PathVariable("id") long id) {
+        return productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
+    }
+
     @GetMapping("/deleteProduct/{id}")
     public String deleteProduct(@PathVariable("id") long id, Model model) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
+        Product product = getProductById(id);
         productRepository.delete(product);
         model.addAttribute("products", productRepository.findAll());
         return "index";
