@@ -1,4 +1,9 @@
-* thymeleaf composition
-* add users
+* thymeleaf composition -> some forms are very similar
+* add orders
 * lots of duplication in prod and user controller. Or everything :o.
 * * solution 1: base class. need reflexion to edit mapping values. quite fragile
+* permissions for mariadb data folder
+* helm charts
+* security
+* healthchecks
+* scalability
