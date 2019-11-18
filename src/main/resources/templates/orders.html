@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:insert="fragments.html :: head(title='Products home')"/>
+    <body>
+        <div th:switch="${products}" class="container my-5">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2 th:case="null">No products yet!</h2>
+                    <div th:case="*">
+                        <h2 class="my-5">Products</h2>
+                        <table class="table table-striped table-responsive-md">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>User</th>
+                                </tr>
+                            </thead>
+                            <form action="#" th:action="@{/addOrder}" th:object="${order}" method="post">
+                                <tbody>
+                                    <tr th:each="product : ${products}">
+                                        <div class="row">
+                                            <div class="form-group col-md-6">
+                                                <td th:text="${product.name}"></td>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <td th:text="${product.price}"></td>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <td>
+                                                    <input type="number" step="1" class="form-control" id="price" placeholder="Quantity">
+                                                </td>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <td>
+                                                    <select>
+                                                        <option th:each="user : ${users}" th:value="${user.name}" th:text="${user.name}"/>
+                                                    </select>
+                                                </td>
+                                            </div>
+                                        </div>
+                                    </tr>
+                                    <tr>
+                                        <td><input name="submit" type="submit" value="submit" /></td>
+                                    </tr>
+                                </tbody>
+                            </form>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer th:insert="fragments.html :: footer"/>
+    </body>
+</html>

@@ -25,7 +25,7 @@ public class UserController implements Logger {
     }
 
     @GetMapping("/createUser")
-    public String showCreateUserForm(User user) {
+    public String showCreateUserForm() {
         return "add-user";
     }
 
@@ -36,8 +36,6 @@ public class UserController implements Logger {
 
     @PostMapping("/updateUser/{id}")
     public String updateUser(@PathVariable("id") long id, @Valid User user, BindingResult result, Model model) {
-        System.out.println("UserController.updateUser");
-        System.out.println("id = " + id + ", user = " + user + ", result = " + result + ", model = " + model);
         return changeOnUser(user, result, model, "update-user", "index", userRepository::save);
     }
 
@@ -54,8 +52,6 @@ public class UserController implements Logger {
 
     @GetMapping("/editUser/{id}")
     public String showUpdateForm(@PathVariable("id") long id, Model model) {
-        System.out.println("UserController.showUpdateForm");
-        System.out.println("id = " + id + ", model = " + model);
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
         model.addAttribute("user", user);
         return "update-user";
