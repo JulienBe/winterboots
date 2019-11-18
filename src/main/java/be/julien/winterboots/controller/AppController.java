@@ -1,6 +1,5 @@
 package be.julien.winterboots.controller;
 
-import be.julien.winterboots.repositories.OrderRepository;
 import be.julien.winterboots.repositories.ProductRepository;
 import be.julien.winterboots.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +14,6 @@ public class AppController {
     ProductRepository productRepository;
     @Autowired
     UserRepository userRepository;
-    @Autowired
-    OrderRepository orderRepository;
 
     @RequestMapping("/productPage")
     public String showProductPage(Model model) {
@@ -30,11 +27,4 @@ public class AppController {
         return "users";
     }
 
-
-    @RequestMapping("/orderPage")
-    public String showOrderPage(Model model) {
-        showProductPage(model);
-        showUserPage(model);
-        return "orders";
-    }
 }
